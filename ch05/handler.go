@@ -24,6 +24,8 @@ func keyValuePutHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	logger.WritePut(key, string(value))
 	w.WriteHeader(http.StatusCreated)
 }
 
@@ -43,4 +45,14 @@ func keyValueGetHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write([]byte(value))
+}
+
+func keyValueDeleteHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	key := vars["key"]
+
+	delete(store.m, key)
+
+	logger.WriteDelete(key)
+	w.WriteHeader(http.StatusOK)
 }
